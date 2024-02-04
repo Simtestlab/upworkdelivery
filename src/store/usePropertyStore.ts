@@ -1,11 +1,13 @@
+import { NodeProperties } from "@/layouts";
+import { Node } from "reactflow";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface PropertyStore {
   showProperty: boolean;
-  properties: Record<string, any> | null;
+  properties: NodeProperties | null;
   setShowProperty: (show: boolean) => void;
-  setProperties: (properties: Record<string, any> | null) => void;
+  setProperties: (properties: NodeProperties | null | undefined) => void;
 }
 
 export const usePropertyStore = create<PropertyStore>((set) => ({

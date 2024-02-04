@@ -1,17 +1,5 @@
 "use client";
 
-import { Trash2, Pencil } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import React, { useEffect, useState } from "react";
 import ReactFlow, {
   Background,
@@ -21,38 +9,27 @@ import ReactFlow, {
 } from "reactflow";
 import { useFlow } from "@/hooks/useFlow";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import "reactflow/dist/style.css";
-import { Button } from "@/components/ui/button";
+
 import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
-import { Switch } from "@/components/ui/switch";
+
 import { useThemeStore } from "@/store/useThemeStore";
 import { useLocalStorage } from "usehooks-ts";
 import { useDiagramStore } from "@/store/useDiagramStore";
-import { isEmpty } from "lodash";
+
 import Header from "@/components/header";
 import { cn } from "@/lib/utils";
 import { usePropertyStore } from "@/store/usePropertyStore";
+import { Properties } from "@/components";
 
 const proOptions = { hideAttribution: true };
 
 type Props = {};
 
 const HomePage = (props: Props) => {
-  const [diagrams, setDiagrams] = useLocalStorage("diagrams", {}) as any;
-  const { loadDiagram } = useDiagramStore();
   const { getNodes, getEdges, setNodes, setEdges } = useReactFlow();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [tempDiagramName, setTempDiagramName] = useState("");
   const {
     nodes,
     nodeTypes,
@@ -68,27 +45,12 @@ const HomePage = (props: Props) => {
     edgeStyleType,
     diagramName,
     setDiagramName,
-    onDiagramSave,
-    createNewDiagram,
   } = useFlow();
 
   const { setTheme, theme, systemTheme } = useTheme();
   const { themeStyle, setThemeStyle } = useThemeStore();
-  const { showProperty, setProperties, setShowProperty } = usePropertyStore();
-
-  useEffect(() => {
-    if (theme === "light") {
-      setIsDarkMode(false);
-    } else if (theme === "system") {
-      if (systemTheme === "dark") {
-        setIsDarkMode(true);
-      } else {
-        setIsDarkMode(false);
-      }
-    } else {
-      setIsDarkMode(true);
-    }
-  }, [theme, systemTheme]);
+  const { showProperty, properties, setProperties, setShowProperty } =
+    usePropertyStore();
 
   useEffect(() => {
     if (themeStyle === "turbo-flow") {
@@ -127,11 +89,11 @@ const HomePage = (props: Props) => {
     <React.Fragment>
       <Header {...{ setDiagramName, diagramName }} />
       <div className="px-5">
-        <div className="pb-16">
-          <div className="w-full flex py-5 gap-5">
+        <div className="pb-5">
+          <div className="w-full flex pb-5 gap-5">
             <div
               className={cn(
-                "!h-[calc(100vh-5rem-64px-1.25rem-36px)] transition-['width'] duration-300",
+                "!h-[calc(100vh-64px-1.25rem-36px-156px)] transition-['width'] duration-300",
 
                 showProperty ? "w-[75%]" : "w-full"
               )}
@@ -194,7 +156,7 @@ const HomePage = (props: Props) => {
                   className="max-w-xs w-full relative z-50 top-3 left-3 bg-background border-2"
                   placeholder="Enter Diagram Name"
                 />
-                <div className="flex items-center absolute z-50 top-3 right-3 gap-3">
+                {/* <div className="flex items-center absolute z-50 top-3 right-3 gap-3">
                   {themeStyle === "light-dark" && (
                     <div className="flex items-center space-x-2">
                       <Label htmlFor="light-dark-switch">Switch</Label>
@@ -242,7 +204,7 @@ const HomePage = (props: Props) => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
                 <Background />
                 <Controls />
                 <MiniMap zoomable pannable />
@@ -255,78 +217,12 @@ const HomePage = (props: Props) => {
                 `}</style>
               </ReactFlow>
             </div>
-            <div
-              className={cn(
-                "bg-background border rounded-md transition-['width'] duration-300 h-[calc(100vh-5rem-64px-1.25rem-36px)] flex flex-col justify-center items-center",
-                showProperty ? "w-[25%] opacity-100" : "w-0 hidden"
-              )}
-            >
-              Properties will goes here
-              <Button
-                className="mt-5"
-                onClick={() => {
-                  setProperties(null);
-                  setShowProperty(false);
-                }}
-              >
-                Close
-              </Button>
-            </div>
+            <Properties />
           </div>
-          <div className="flex items-center justify-center gap-3">
-            {diagramName === "" ? (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button>Save</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Please, first enter your{" "}
-                      <span className="text-red-500">diagram name</span>, then
-                      save it.
-                    </AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogAction>Okay</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            ) : (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button>Save</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Do you want to save the{" "}
-                      <strong className="text-green-600">{diagramName}</strong>{" "}
-                      diagram?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You have made changes to the {diagramName} diagram. Saving
-                      it will preserve your edits and ensure you can access it
-                      later.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={onDiagramSave}>
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
 
-            <Button variant="outline" onClick={createNewDiagram}>
-              Create New Diagram
-            </Button>
-          </div>
-          <div className="space-y-1 5">
+          <div className="space-y-1">
             <Label htmlFor="diagram">Logs</Label>
-            <div className="bg-black">
+            <div className="bg-black overflow-auto max-h-32">
               <pre className="text-green-400 p-3">
                 {JSON.stringify({ nodes, edges }, null, 2)}
               </pre>

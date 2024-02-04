@@ -23,6 +23,9 @@ import {
   useReactFlow,
 } from "reactflow";
 import { useDiagramStore } from "@/store/useDiagramStore";
+import { properties } from "@/data/properties";
+import { HEADER_COLORS } from "@/styles";
+import { snakeCase } from "lodash";
 
 export const useFlow = () => {
   const { default: defaultDiagram, diagram } = useDiagramStore();
@@ -40,7 +43,7 @@ export const useFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(diagram.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(diagram.edges);
   const [edgeStyleType, setEdgeStyleType] = useState<string>(
-    EdgeStyleTypes.SMOOTH_STEP
+    EdgeStyleTypes.SIMPLE_BEZIER
   );
   const [diagramName, setDiagramName] = useState(defaultDiagram);
   const nodeTypes = useMemo(() => generatedNodeTypes, []);
@@ -106,11 +109,9 @@ export const useFlow = () => {
 
       const reactFlowBounds: any =
         reactFlowWrapper?.current?.getBoundingClientRect();
-      const type = event.dataTransfer.getData("application/reactflow");
-      const nodeLabel = event.dataTransfer.getData(
-        "application/reactflow/nodeLabel"
-      );
-      console.log({ type }, "azim");
+      const type = event.dataTransfer.getData("application/reactflow/type");
+      const label = event.dataTransfer.getData("application/reactflow/label");
+
       if (typeof type === "undefined") {
         return;
       }
@@ -125,11 +126,15 @@ export const useFlow = () => {
 
       if (!position) return;
 
+      const background = type
+        ? HEADER_COLORS[snakeCase(type).toUpperCase()] || "#000"
+        : "#000";
+
       const newNode = {
         id: nanoid(),
         type,
         position,
-        data: { nodeLabel },
+        data: { label, ...properties[type], background },
       };
 
       setNodes((nds: Node[]) => nds.concat(newNode));

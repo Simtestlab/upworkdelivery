@@ -12,15 +12,17 @@ import {
 } from "../ui/accordion";
 import { Input } from "../ui/input";
 
+interface NodeData {
+  label: string;
+}
+
 const Sidebar = () => {
-  const onDragStart = (
-    event: DragEvent<HTMLDivElement>,
-    nodeType: string,
-    nodeLabel: string
-  ) => {
-    console.log({ nodeType });
-    event.dataTransfer.setData("application/reactflow", nodeType);
-    event.dataTransfer.setData("application/reactflow/nodeLabel", nodeLabel);
+  const onDragStart = (event: DragEvent<HTMLDivElement>, data: NodeData) => {
+    event.dataTransfer.setData(`application/reactflow/label`, data.label);
+    event.dataTransfer.setData(
+      `application/reactflow/type`,
+      camelCase(data.label)
+    );
     event.dataTransfer.effectAllowed = "move";
   };
 
@@ -38,7 +40,7 @@ const Sidebar = () => {
     <aside className="w-72 min-h-screen bg-gray-100 dark:bg-background">
       <Link
         href="/"
-        className="h-20 grid place-content-center text-center font-bold text-3xl bg-primary text-white"
+        className="h-16 grid place-content-center text-center font-bold text-3xl bg-primary text-white"
       >
         ERender
       </Link>
@@ -47,7 +49,7 @@ const Sidebar = () => {
           Project tree structure goes here
         </div>
       </div>
-      <div className="p-2">
+      <div className="p-2 h-[calc(100vh-112px-64px)] overflow-auto">
         <div className="border bg-background">
           <h3 className="py-3 text-center text-xl font-bold">Blocks</h3>
           <div className="flex flex-col gap-y-3 p-5">
@@ -65,61 +67,20 @@ const Sidebar = () => {
                   <AccordionContent>
                     <div className="flex flex-col gap-2 p-1 pb-4">
                       {navigation.children.map((child) => {
-                        if (child.children) {
-                          return (
-                            <Accordion
-                              key={child.label}
-                              type="single"
-                              collapsible
-                            >
-                              <AccordionItem
-                                key={index}
-                                value={navigation.label}
-                              >
-                                <AccordionTrigger>
-                                  {child.label}
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div className="flex flex-col gap-2 p-1 pb-4">
-                                    {child.children.map((grandChild) => (
-                                      <div
-                                        draggable
-                                        onDragStart={(event) =>
-                                          onDragStart(
-                                            event,
-                                            camelCase(grandChild.name),
-                                            grandChild.name
-                                          )
-                                        }
-                                        className="bg-background cursor-grab flex w-full rounded-md border border-input px-3 py-2 text-sm shadow-sm transition-colors"
-                                        key={grandChild.name}
-                                      >
-                                        {grandChild.name}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          );
-                        } else {
-                          return (
-                            <div
-                              draggable
-                              onDragStart={(event) =>
-                                onDragStart(
-                                  event,
-                                  camelCase(child.name),
-                                  child.name
-                                )
-                              }
-                              className="bg-background cursor-grab flex w-full rounded-md border border-input px-3 py-2 text-sm shadow-sm transition-colors"
-                              key={child.name}
-                            >
-                              {child.name}
-                            </div>
-                          );
-                        }
+                        return (
+                          <div
+                            draggable
+                            onDragStart={(event) =>
+                              onDragStart(event, {
+                                label: child.name,
+                              })
+                            }
+                            className="bg-background cursor-grab flex w-full rounded-md border border-input px-3 py-2 text-sm shadow-sm transition-colors"
+                            key={child.name}
+                          >
+                            {child.name}
+                          </div>
+                        );
                       })}
                     </div>
                   </AccordionContent>
@@ -134,3 +95,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+export * from "./properties";

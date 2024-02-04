@@ -7,98 +7,92 @@ const __dirname = path.resolve();
 
 export const sidebarNavigation = [
   {
-    label: "Broker Login",
+    label: "Utilities",
     children: [
-      { name: "Broker A" },
-      { name: "Broker B" },
-      { name: "Broker C" },
+      { name: "Map Range", component: "BaseNode" },
+      { name: "Math", component: "Math" },
     ],
   },
   {
-    label: "Instrument Selection",
+    label: "Vector",
     children: [
-      {
-        label: "Options",
-        children: [{ name: "Index" }, { name: "Expiry Date" }],
-      },
-      { name: "Equity" },
+      { name: "Combine XYZ", component: "CombineXYZ" },
+      { name: "Separate XYZ", component: "SeparateXYZ" },
+      { name: "Vector Math", component: "VectorMath" },
     ],
   },
   {
-    label: "Customize Parameter",
+    label: "Input",
     children: [
-      { name: "Strike Size" },
-      { name: "Lot Size" },
-      {
-        label: "Strike Length",
-        children: [
-          { name: "Scan Time" },
-          { name: "PNL Check Frequency" },
-          { name: "Trading Decision" },
-          { name: "Buying" },
-          { name: "Selling" },
-        ],
-      },
+      { name: "Index", component: "Index" },
+      { name: "Value", component: "Value" },
+      { name: "Vector", component: "InputVector" },
     ],
   },
   {
-    label: "Decision",
-    children: [{ name: "IF_else" }],
+    label: "Output",
+    children: [{ name: "Viewer", component: "Viewer" }],
   },
   {
-    label: "Loops",
-    children: [{ name: "For Loop" }, { name: "While Loop" }],
+    label: "Point",
+    children: [{ name: "Points", component: "Points" }],
   },
   {
-    label: "Trading",
+    label: "Instances",
+    children: [{ name: "Instance on Points", component: "InstanceOnPoints" }],
+  },
+  {
+    label: "Curve Primitives",
     children: [
-      { name: "Instruments" },
-      { name: "Indicators" },
-      { name: "Triggers" },
-      { name: "Trade Legs" },
+      { name: "Curve Circle", component: "CurvePrimitiveCircle" },
+      { name: "Quadrilateral", component: "CurvePrimitiveQuadrilateral" },
     ],
   },
   {
-    label: "OMS",
+    label: "Curve",
     children: [
-      { name: "Cancel Open Order" },
-      { name: "Square Off All Positions" },
-      { name: "Order Filter" },
-      {
-        label: "Square Positions",
-        children: [
-          { name: "Price Limit" },
-          { name: "Premium Above" },
-          { name: "Premium Below" },
-          { name: "All Buy" },
-          { name: "All Sell" },
-        ],
-      },
+      { name: "Curve to Mesh", component: "CurveToMesh" },
+      { name: "Fillet Curve", component: "FilletCurve" },
     ],
   },
   {
-    label: "Hedge Buy",
-    children: [{ name: "Premium Max Limit" }, { name: "Quantity" }],
+    label: "Mesh Primitives",
+    children: [
+      { name: "Cube", component: "MeshPrimitiveCube" },
+      { name: "Cylinder", component: "MeshPrimitiveCylinder" },
+      { name: "UV Sphere", component: "MeshPrimitiveUvSphere" },
+      { name: "Grid", component: "MeshPrimitiveGrid" },
+    ],
   },
   {
-    label: "RMS",
-    children: [{ name: "PNL" }, { name: "Order Count" }],
+    label: "Geometry",
+    children: [
+      { name: "Join Geometry", component: "JoinGeometry" },
+      { name: "Transform", component: "Transform" },
+      { name: "Bounding Box", component: "BoundingBox" },
+    ],
   },
   {
-    label: "Trade Leg",
-    children: [{ name: "Strike Selection" }],
+    label: "Material",
+    children: [{ name: "Set Material", component: "SetMaterial" }],
   },
-  // Add more sections and children as needed
+  {
+    label: "Group",
+    children: [
+      { name: "Group Input", component: "GroupInput" },
+      { name: "Group Output", component: "GroupOutput" },
+    ],
+  },
 ];
 
 const componentCode = (name) => {
   return `
 import React from "react";
-import { NODE_COMMON_FIELDS, NodeLayout } from "@/layouts";
+import { BaseNode } from "@/layouts";
 import { Node } from "reactflow";
 
 export const ${upperFirst(camelCase(name))} = (props: Node) => {
-  return <NodeLayout title="${name}" nodeProps={props} fields={NODE_COMMON_FIELDS} />;
+  return <BaseNode title="${name}" node={props} />;
 };
 `;
 };

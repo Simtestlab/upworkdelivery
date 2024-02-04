@@ -47,7 +47,7 @@ function toJSON(elements: any) {
     type: "application/json",
   });
   downloadLink.href = URL.createObjectURL(fileBlob);
-  downloadLink.download = `EXALGO_${nanoid(5)}.json`;
+  downloadLink.download = `E_RENDER_${nanoid(5)}.json`;
   downloadLink.click();
 }
 
@@ -63,7 +63,6 @@ const checkduplicity = (arrayData: any) => {
   });
   return itemsData;
 };
-
 
 function removeDuplicatesById(array1: any, array2: any) {
   // Concatenate the two arrays into a single array
