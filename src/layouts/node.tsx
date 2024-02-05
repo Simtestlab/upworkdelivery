@@ -3,19 +3,20 @@ import { usePropertyStore } from "@/store/usePropertyStore";
 import React from "react";
 import { Handle, Node, Position } from "reactflow";
 
-interface InputProps {
+interface IOProps {
   name: string;
   identifier: string;
   type: string;
   links: any[]; // You may replace 'any' with a more specific type if you know the structure of the 'links' array
   display_shape: string;
   is_multi_input: boolean;
+  value: any;
 }
 
 interface NodeData {
   label: string;
-  inputs: InputProps[];
-  outputs: InputProps[];
+  inputs: IOProps[];
+  outputs: IOProps[];
   background: string;
   operations?: string[];
   operation?: string;
